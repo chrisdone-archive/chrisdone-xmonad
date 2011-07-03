@@ -11,7 +11,9 @@ Build-type:          Simple
 Cabal-version:       >=1.2
 
 Executable xmonad-chrisdone
+  Hs-source-dirs:    src
   Main-is:           Main.hs
   Build-depends:     base >4 && <5,
                      xmonad >=0.9,
-                     xmonad-contrib >= 0.9
+                     xmonad-contrib >= 0.9,
+                     containers >= 0.3

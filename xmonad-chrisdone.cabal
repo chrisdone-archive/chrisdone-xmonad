@@ -1,0 +1,17 @@
+Name:                xmonad-chrisdone
+Version:             0.1
+Synopsis:            My xmonad.
+Description:         Just my xmonad. Nothing fanc.y
+License:             BSD3
+License-file:        LICENSE
+Author:              Chris Done
+Maintainer:          chrisdone@gmail.com
+Category:            Desktop
+Build-type:          Simple
+Cabal-version:       >=1.2
+
+Executable xmonad-chrisdone
+  Main-is:           Main.hs
+  Build-depends:     base >4 && <5,
+                     xmonad >=0.9,
+                     xmonad-contrib >= 0.9

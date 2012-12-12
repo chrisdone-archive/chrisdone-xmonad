@@ -13,7 +13,7 @@ import           XMonad.Util.Run           (spawnPipe)
 -- | Main entry point.
 main :: IO ()
 main = do
-  _ <- spawnPipe "xcompmgr -t-5 -l-5 -r4.2 -o.55 -F & disown"
+  _ <- spawnPipe "xcompmgr -t-5 -l-5 -r4.2 -o.55 -F"
   xmonad $ ewmh gnomeConfig
            { terminal          = "gnome-terminal"
            , modMask           = mod4Mask
@@ -21,7 +21,12 @@ main = do
            , borderWidth       = 0
            , logHook           = fadeInactiveLogHook 0xbbbbbbbb
            , keys              = newKeys
+           , manageHook        = myManageHook
            }
   where newKeys x = M.union (keys defaultConfig x) (M.fromList (myKeys x))  
         myKeys conf@(XConfig{modMask=modm}) =
           [((modm,xK_d),withFocused demanage)]
+        myManageHook = composeAll
+         [ className =? "Unity-2d-panel"    --> doIgnore
+         , className =? "Unity-2d-launcher" --> doIgnore
+         ]

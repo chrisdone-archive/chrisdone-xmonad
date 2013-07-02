@@ -31,4 +31,5 @@ Executable xmonad
                      th-lift,
                      fay,
                      syb,
-                     data-default
+                     data-default,
+                     X11

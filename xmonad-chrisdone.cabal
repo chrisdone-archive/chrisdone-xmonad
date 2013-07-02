@@ -10,10 +10,25 @@ Category:            Desktop
 Build-type:          Simple
 Cabal-version:       >=1.2
 
-Executable xmonad-chrisdone
+Executable xmonad
+  Ghc-options:       -threaded
   Hs-source-dirs:    src
   Main-is:           Main.hs
   Build-depends:     base >4 && <5,
                      xmonad >=0.9,
                      xmonad-contrib >= 0.9,
-                     containers >= 0.3
+                     containers >= 0.3,
+                     webkit >= 0.12.4,
+                     glib,
+                     network,
+                     HTTP,
+                     gtk,
+                     time,
+                     transformers,
+                     utf8-string,
+                     aeson,
+                     template-haskell,
+                     th-lift,
+                     fay,
+                     syb,
+                     data-default

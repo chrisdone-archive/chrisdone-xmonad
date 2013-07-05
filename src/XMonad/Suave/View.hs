@@ -22,7 +22,8 @@ view = do
       theme
     body $ do
       rhs
-      script ! src "/script" $ return ()
+      script ! src "http://code.jquery.com/jquery-1.10.1.min.js" $ return ()
+      script ! src "/client" $ return ()
 
 -- | CSS theme.
 theme :: Html
@@ -66,8 +67,10 @@ theme = do
 -- | Right-hand size.
 rhs :: Html
 rhs = do
- span !# "rhs" $ do
-   span !. "indicator" !# "date" $ return ()
+  span !# "lhs" $ do
+    span !. "indicator" !# "i3" $ return ()
+  span !# "rhs" $ do
+    span !. "indicator" !# "date" $ return ()
 
 -- | Class names.
 (!.) :: Attributable h => h -> AttributeValue -> h

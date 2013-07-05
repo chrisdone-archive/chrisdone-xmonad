@@ -12,6 +12,7 @@ Cabal-version:       >=1.2
 Data-files:          src/XMonad/Suave/Client.hs
                      src/DOM.hs
                      src/ECMA.hs
+                     src/JQuery.hs
 
 Executable xmonad
   Ghc-options:       -threaded

@@ -6,6 +6,7 @@ import DOM
 import ECMA
 import FFI
 import Prelude
+import JQuery
 
 -- | Main entry point for the script.
 main :: Fay ()
@@ -13,14 +14,22 @@ main = do
   body <- getElementById "date"
   case body of
     Null -> return ()
-    Nullable body -> updateDate body
+    Nullable body -> do updateDate body
+                        updateI3
+
+-- | Update with some system-specific info.
+updateI3 :: Fay ()
+updateI3 = void $
+  setInterval 1000 $ \_ -> do
+    i3 <- select "#i3"
+    load "/i3status" i3
 
 -- | Update the date display.
 updateDate :: Element -> Fay ()
-updateDate body = void $ do
-  date <- newDate
-  setInnerText body (toString date)
-  setTimeout 1000 (const (updateDate body))
+updateDate body = void $
+  setInterval 1000 $ \_ -> do
+    date <- newDate
+    setInnerText body (toString date)
 
 --------------------------------------------------------------------------------
 -- Misc

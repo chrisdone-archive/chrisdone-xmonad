@@ -11,12 +11,14 @@ import XMonad.Suave.View
 import Control.Monad.Trans
 import Data.Default
 import Data.Text.Lazy
+import Data.Text.Lazy.IO as T
 import Fay
 import Fay
 import Fay.Compiler
 import Fay.Compiler.Config
 import Fay.Compiler.Debug
 import Fay.Types
+import System.Process (readProcess,runInteractiveCommand,terminateProcess)
 import Text.Blaze.Html.Renderer.Text
 import Web.Scotty
 
@@ -24,15 +26,25 @@ import Web.Scotty
 suaveServer :: IO ()
 suaveServer =
   scotty suavePort
-         (do get "/script"
-                 (do dir <- io (fmap (++"/src") getDataDir)
-                     fp <- io (getDataFileName "src/XMonad/Suave/Client.hs")
-                     result <- io (compileFile (addConfigDirectoryIncludePaths [dir] def)
-                                               fp)
-                     case result of
-                       Left err -> raise (pack (showCompileError err))
-                       Right js -> text (pack js))
-             get "/"
-                 (html (renderHtml view)))
+         (do get "/client" client
+             get "/i3status" i3status
+             get "/" renderView)
 
-  where io = liftIO
+client = do dir <- io (fmap (++"/src") getDataDir)
+            fp <- io (getDataFileName "src/XMonad/Suave/Client.hs")
+            result <- io (compileFile (addConfigDirectoryIncludePaths [dir] def)
+                                      fp)
+            header "Content-Type" "text/javascript"
+            case result of
+              Left err -> raise (pack (showCompileError err))
+              Right js -> text (pack js)
+
+renderView = html (renderHtml view)
+
+i3status = do (_in,out,_err,pid) <- io $ runInteractiveCommand "i3status"
+              line <- io $ T.hGetLine out
+              io $ terminateProcess pid
+              text line
+
+io :: MonadIO m => IO a -> m a
+io = liftIO

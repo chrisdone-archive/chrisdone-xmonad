@@ -1,0 +1,8 @@
+-- preprocessor flags
+:set -XCPP -DFAY
+-- package settings
+:set -hide-all-packages -package fay -package fay-base
+-- warning settings
+:set -Wall
+:set -fno-warn-unused-do-bind -fno-warn-missing-methods -fno-warn-orphans
+:set -XNoImplicitPrelude

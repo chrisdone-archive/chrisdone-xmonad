@@ -9,6 +9,8 @@ Maintainer:          chrisdone@gmail.com
 Category:            Desktop
 Build-type:          Simple
 Cabal-version:       >=1.2
+Data-files:          src/XMonad/Suave/Client.hs
+                     src/DOM.hs
 
 Executable xmonad
   Ghc-options:       -threaded
@@ -32,4 +34,10 @@ Executable xmonad
                      fay,
                      syb,
                      data-default,
-                     X11
+                     X11,
+                     scotty,
+                     blaze-html,
+                     blaze-markup,
+                     text,
+                     mtl,
+                     process

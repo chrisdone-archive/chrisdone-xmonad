@@ -11,6 +11,7 @@ Build-type:          Simple
 Cabal-version:       >=1.2
 Data-files:          src/XMonad/Suave/Client.hs
                      src/DOM.hs
+                     src/ECMA.hs
 
 Executable xmonad
   Ghc-options:       -threaded

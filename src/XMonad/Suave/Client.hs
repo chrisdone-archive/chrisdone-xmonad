@@ -3,6 +3,7 @@
 module XMonad.Suave.Client where
 
 import DOM
+import ECMA
 import FFI
 import Prelude
 
@@ -12,6 +13,18 @@ main = do
   body <- getElementById "date"
   case body of
     Null -> return ()
-    Nullable body -> do
-      date <- newDate
-      setInnerText body (toString date)
+    Nullable body -> updateDate body
+
+-- | Update the date display.
+updateDate :: Element -> Fay ()
+updateDate body = void $ do
+  date <- newDate
+  setInnerText body (toString date)
+  setTimeout 1000 (const (updateDate body))
+
+--------------------------------------------------------------------------------
+-- Misc
+
+-- | Ignore the return value of the given action.
+void :: Fay a -> Fay ()
+void m = m >> return ()

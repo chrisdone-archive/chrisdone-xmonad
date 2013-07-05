@@ -50,12 +50,17 @@ theme = do
                   ,"cursor: default;"
                   ,"}"
                   ,".indicator {"
-                  ,"margin-right: 0.5em;"
+                  ,"margin-right: 0.5em; visibility:visible"
                   ,"}"
+                  ,".ip { display: none }"
+                  ,"#wifi:hover .ip { display: inline }"
                   ,"#date {"
                   ,"}"
                   ,"#rhs {"
                   ,"float: right;"
+                  ,"}"
+                  ,"#lhs,#rhs{"
+                  ,"visibility:hidden"
                   ,"}"
                   ,"#power-off {"
                   ,"cursor: pointer;"
@@ -68,7 +73,7 @@ theme = do
 rhs :: Html
 rhs = do
   span !# "lhs" $ do
-    span !. "indicator" !# "i3" $ return ()
+    span !# "i3" $ return ()
   span !# "rhs" $ do
     span !. "indicator" !# "date" $ return ()
 

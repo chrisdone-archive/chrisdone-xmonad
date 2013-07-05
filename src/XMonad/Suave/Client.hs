@@ -22,7 +22,11 @@ updateI3 :: Fay ()
 updateI3 = void $
   setInterval 1000 $ \_ -> do
     i3 <- select "#i3"
-    load "/i3status" i3
+    get "/i3status" $ \html -> do
+      setHtml html i3
+      quality <- select "#wifi-quality"
+      text <- getText quality
+      setText (drop 1 text) quality
 
 -- | Update the date display.
 updateDate :: Element -> Fay ()

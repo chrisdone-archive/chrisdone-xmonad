@@ -7,7 +7,6 @@ module XMonad.Suave.Server where
 import Paths_xmonad_chrisdone
 import XMonad.Suave.Types
 import XMonad.Suave.View
-
 import Control.Monad.Trans
 import Data.Default
 import Data.Text.Lazy
@@ -16,7 +15,6 @@ import Fay
 import Fay
 import Fay.Compiler
 import Fay.Compiler.Config
-import Fay.Compiler.Debug
 import Fay.Types
 import System.Process (readProcess,runInteractiveCommand,terminateProcess)
 import Text.Blaze.Html.Renderer.Text
@@ -34,10 +32,10 @@ client = do dir <- io (fmap (++"/src") getDataDir)
             fp <- io (getDataFileName "src/XMonad/Suave/Client.hs")
             result <- io (compileFile (addConfigDirectoryIncludePaths [dir] def)
                                       fp)
-            header "Content-Type" "text/javascript"
+            addHeader "Content-Type" "text/javascript"
             case result of
               Left err -> raise (pack (showCompileError err))
-              Right js -> text (pack js)
+              Right (js,_) -> text (pack js)
 
 renderView = html (renderHtml view)
 

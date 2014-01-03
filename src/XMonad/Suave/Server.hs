@@ -11,11 +11,6 @@ import Control.Monad.Trans
 import Data.Default
 import Data.Text.Lazy
 import Data.Text.Lazy.IO as T
-import Fay
-import Fay
-import Fay.Compiler
-import Fay.Compiler.Config
-import Fay.Types
 import System.Process (readProcess,runInteractiveCommand,terminateProcess)
 import Text.Blaze.Html.Renderer.Text
 import Web.Scotty
@@ -29,13 +24,10 @@ suaveServer =
              get "/" renderView)
 
 client = do dir <- io (fmap (++"/src") getDataDir)
-            fp <- io (getDataFileName "src/XMonad/Suave/Client.hs")
-            result <- io (compileFile (addConfigDirectoryIncludePaths [dir] def)
-                                      fp)
+            fp <- io (getDataFileName "panel.js")
+            js <- io (T.readFile fp)
             addHeader "Content-Type" "text/javascript"
-            case result of
-              Left err -> raise (pack (showCompileError err))
-              Right (js,_) -> text (pack js)
+            text js
 
 renderView = html (renderHtml view)
 

@@ -9,10 +9,7 @@ Maintainer:          chrisdone@gmail.com
 Category:            Desktop
 Build-type:          Simple
 Cabal-version:       >=1.2
-Data-files:          src/XMonad/Suave/Client.hs
-                     src/DOM.hs
-                     src/ECMA.hs
-                     src/JQuery.hs
+Data-files:          panel.js
 
 Executable xmonad
   Ghc-options:       -threaded
@@ -33,7 +30,6 @@ Executable xmonad
                      aeson,
                      template-haskell,
                      th-lift,
-                     fay,
                      syb,
                      data-default,
                      X11,

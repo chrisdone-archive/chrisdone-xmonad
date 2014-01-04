@@ -1,5 +1,3 @@
-
-
 -- | The client window (webkit).
 
 module XMonad.Suave.Window where

@@ -9,9 +9,7 @@ import           XMonad.Suave.View
 import           Control.Concurrent
 import           Control.Monad
 import           Control.Monad.Fix
-import           Data.Monoid
 import           Data.Text.Lazy (unpack,Text)
-import qualified Data.Text.Lazy as T
 import qualified Data.Text.Lazy.IO as T
 import           Data.Time
 import           Graphics.UI.Gtk hiding (LayoutClass)
@@ -22,10 +20,7 @@ import           Graphics.UI.Gtk.WebKit.WebView
 import           System.Locale
 import           System.Process
 import           Text.Blaze.Html.Renderer.Text
-import           XMonad hiding (Window)
-import           XMonad.Layout.Gaps
-import           XMonad.Layout.LayoutModifier
-import           XMonad.StackSet
+
 
 -- | Start up a Suave panel.
 suaveStart :: IO (Suave)

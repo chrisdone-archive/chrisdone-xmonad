@@ -6,7 +6,6 @@
 module XMonad.Suave.View where
 
 import Data.Monoid
-import Data.Text (Text)
 import Prelude (($),return)
 import Text.Blaze
 import Text.Blaze.Html5

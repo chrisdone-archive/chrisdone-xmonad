@@ -14,16 +14,14 @@ import Text.Blaze.Html5.Attributes hiding (span,style)
 import Text.Blaze.Internal
 
 -- | View for the panel.
-view :: Html
-view = do
+page :: Html
+page = do
   docType
   html $ do
     head $ do
       theme
     body $ do
       rhs
-      script ! src "http://code.jquery.com/jquery-1.10.1.min.js" $ return ()
-      script ! src "/client" $ return ()
 
 -- | CSS theme.
 theme :: Html

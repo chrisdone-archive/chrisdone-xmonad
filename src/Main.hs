@@ -4,7 +4,7 @@
 
 module Main where
 
-import           Control.Monad
+
 import qualified Data.Map                  as M
 import           XMonad
 import           XMonad.Actions.DeManage   (demanage)
@@ -12,7 +12,6 @@ import           XMonad.Config.Gnome       (gnomeConfig)
 import           XMonad.Hooks.EwmhDesktops (ewmh)
 import           XMonad.Hooks.FadeInactive (fadeInactiveLogHook)
 import           XMonad.Suave
-import           XMonad.Util.Run           (spawnPipe)
 
 -- | Main entry point.
 main :: IO ()

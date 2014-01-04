@@ -1,7 +1,7 @@
 Name:                xmonad-chrisdone
 Version:             0.1
 Synopsis:            My xmonad.
-Description:         Just my xmonad. Nothing fanc.y
+Description:         My xmonad configuration.
 License:             BSD3
 License-file:        LICENSE
 Author:              Chris Done
@@ -9,33 +9,14 @@ Maintainer:          chrisdone@gmail.com
 Category:            Desktop
 Build-type:          Simple
 Cabal-version:       >=1.2
-Data-files:          panel.js
+Data-files:          i3status.conf
 
 Executable xmonad
-  Ghc-options:       -threaded
+  Ghc-options:       -threaded -O2
   Hs-source-dirs:    src
   Main-is:           Main.hs
-  Build-depends:     base >4 && <5,
-                     xmonad >=0.9,
+  Build-depends:     base >= 4 && <5,
+                     xmonad >= 0.9,
                      xmonad-contrib >= 0.9,
                      containers >= 0.3,
-                     webkit >= 0.12.4,
-                     glib,
-                     network,
-                     HTTP,
-                     gtk,
-                     time,
-                     transformers,
-                     utf8-string,
-                     aeson,
-                     template-haskell,
-                     th-lift,
-                     syb,
-                     data-default,
-                     X11,
-                     scotty,
-                     blaze-html,
-                     blaze-markup,
-                     text,
-                     mtl,
-                     process
+                     webkit >= 0.12.5.1

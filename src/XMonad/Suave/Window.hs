@@ -1,22 +1,36 @@
-{-# LANGUAGE FlexibleContexts #-}
+
 
 -- | The client window (webkit).
 
 module XMonad.Suave.Window where
 
-import XMonad.Suave.Types
+import           Paths_xmonad_chrisdone
+import           XMonad.Suave.Types
+import           XMonad.Suave.View
 
-import Control.Monad
-import Data.Monoid
-import Graphics.UI.Gtk hiding (LayoutClass)
-import Graphics.UI.Gtk.WebKit.WebView
-import XMonad hiding (Window)
-import XMonad.Layout.Gaps
-import XMonad.Layout.LayoutModifier
-import XMonad.StackSet
+import           Control.Concurrent
+import           Control.Monad
+import           Control.Monad.Fix
+import           Data.Monoid
+import           Data.Text.Lazy (unpack,Text)
+import qualified Data.Text.Lazy as T
+import qualified Data.Text.Lazy.IO as T
+import           Data.Time
+import           Graphics.UI.Gtk hiding (LayoutClass)
+import           Graphics.UI.Gtk.WebKit.DOM.Document
+import           Graphics.UI.Gtk.WebKit.DOM.HTMLElement
+import           Graphics.UI.Gtk.WebKit.Types hiding (Text)
+import           Graphics.UI.Gtk.WebKit.WebView
+import           System.Locale
+import           System.Process
+import           Text.Blaze.Html.Renderer.Text
+import           XMonad hiding (Window)
+import           XMonad.Layout.Gaps
+import           XMonad.Layout.LayoutModifier
+import           XMonad.StackSet
 
 -- | Start up a Suave panel.
-suaveStart :: IO Suave
+suaveStart :: IO (Suave)
 suaveStart = do
   void initGUI
   window <- windowNew
@@ -28,26 +42,36 @@ suaveStart = do
              ,windowTitle    := suaveWindowTitle]
   boxPackStart vContainer scrolledWindow PackGrow 0
   set scrolledWindow [containerChild := webview]
-  webViewLoadUri webview ("http://localhost:" ++ show suavePort)
+  Just document <- webViewGetDomDocument webview
+  Just body <- documentGetBody document
+  htmlElementSetInnerHTML body (unpack (renderHtml page))
+  Just i3 <- fmap (fmap castToHTMLElement)
+                  (documentGetElementById document "i3")
+  Just date <- fmap (fmap castToHTMLElement)
+                    (documentGetElementById document "date")
+  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date)
+                                 threadDelay (1000 * 1000)
+                                 loop)))
   void (onDestroy window mainQuit)
   void (widgetShowAll window)
   return (Suave window)
 
--- | Setup the right panel layout for Suave.
-suaveLayout :: ModifiedLayout Gaps (Choose Tall Full) a
-suaveLayout = gaps [(U,40)] (Tall 1 (3/100) (1/2) ||| Full)
+-- | Update the contents of the panel.
+updateUI :: HTMLElement -> HTMLElement -> IO ()
+updateUI i3 date =
+  do status <- i3status
+     htmlElementSetInnerHTML i3 (unpack status)
+     now <- getZonedTime
+     htmlElementSetInnerHTML date (formatTime defaultTimeLocale "%F %T %z (%Z)" now)
 
--- | Set the position of the Suave panel.
-suaveStartupHook :: Suave -> X ()
-suaveStartupHook (Suave suave) = withWindowSet $ \stackset -> do
-  liftIO (windowResize suave
-                       (head (map (fromIntegral . rect_width . screenRect . screenDetail)
-                                  (screens stackset)))
-                       40)
-
--- | Ignore the Suave window as a panel.
-suaveManageHook :: Query (Endo WindowSet)
-suaveManageHook = composeAll [ title =? suaveWindowTitle --> doIgnore]
+-- | Get the output from i3status.
+i3status :: IO Text
+i3status =
+  do fp <- getDataFileName "i3status.conf"
+     (_in,out,_err,pid) <- runInteractiveCommand ("i3status -c " ++ show fp)
+     line <- T.hGetLine out
+     terminateProcess pid
+     return line
 
 -- | Window title of the Suave panel.
 suaveWindowTitle :: String

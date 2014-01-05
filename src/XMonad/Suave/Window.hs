@@ -21,7 +21,6 @@ import           System.Locale
 import           System.Process
 import           Text.Blaze.Html.Renderer.Text
 
-
 -- | Start up a Suave panel.
 suaveStart :: IO (Suave)
 suaveStart = do

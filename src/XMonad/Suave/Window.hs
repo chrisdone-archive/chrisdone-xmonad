@@ -6,9 +6,11 @@ import           Paths_xmonad_chrisdone
 import           XMonad.Suave.Types
 import           XMonad.Suave.View
 
+import           Clockin
 import           Control.Concurrent
 import           Control.Monad
 import           Control.Monad.Fix
+import qualified Data.Text as T
 import           Data.Text.Lazy (unpack,Text)
 import qualified Data.Text.Lazy.IO as T
 import           Data.Time
@@ -41,7 +43,9 @@ suaveStart = do
                   (documentGetElementById document "i3")
   Just date <- fmap (fmap castToHTMLElement)
                     (documentGetElementById document "date")
-  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date)
+  Just clockin <- fmap (fmap castToHTMLElement)
+                       (documentGetElementById document "clockin")
+  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date clockin)
                                  threadDelay (1000 * 1000)
                                  loop)))
   void (onDestroy window mainQuit)
@@ -49,12 +53,16 @@ suaveStart = do
   return (Suave window)
 
 -- | Update the contents of the panel.
-updateUI :: HTMLElement -> HTMLElement -> IO ()
-updateUI i3 date =
+updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> IO ()
+updateUI i3 date clockin =
   do status <- i3status
      htmlElementSetInnerHTML i3 (unpack status)
      now <- getZonedTime
      htmlElementSetInnerHTML date (formatTime defaultTimeLocale "%F %T %z (%Z)" now)
+     config <- getClockinConfig
+     entries <- readClockinEntries config
+     let desc = onelinerStatus now (clockinStatus config (zonedTimeToUTC now) entries)
+     htmlElementSetInnerHTML clockin (T.unpack desc)
 
 -- | Get the output from i3status.
 i3status :: IO Text

@@ -56,6 +56,9 @@ theme = do
                   ,"#rhs {"
                   ,"float: right;"
                   ,"}"
+                  ,"#center {"
+                  ,"text-align:center; position: absolute; top:0;left:0;bottom:0;right:0; line-height: 40px"
+                  ,"}"
                   ,"#lhs,#rhs{"
                   ,"visibility:hidden"
                   ,"}"
@@ -71,6 +74,8 @@ rhs :: Html
 rhs = do
   span !# "lhs" $ do
     span !# "i3" $ return ()
+  span !# "center" $ do
+    span !# "clockin" $ return ()
   span !# "rhs" $ do
     span !. "indicator" !# "date" $ return ()
 

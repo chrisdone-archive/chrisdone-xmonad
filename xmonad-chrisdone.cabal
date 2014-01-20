@@ -15,7 +15,16 @@ Executable xmonad
   Ghc-options:       -threaded -O2
   Hs-source-dirs:    src
   Main-is:           Main.hs
-  Build-depends:     base >= 4 && <5,
+  Build-depends:     clockin >= 0.0.0,
+                     blaze-markup >= 0.5.1.0,
+                     text >= 0.11.2.0,
+                     time >= 1.4.0.0,
+                     old-locale >= 1.0.0.0,
+                     process >= 1.1.0.0,
+                     blaze-html >= 0.6.1.0,
+                     gtk >= 0.12.4,
+                     X11 >= 1.6.1.0,
+                     base >= 4 && <5,
                      xmonad >= 0.9,
                      xmonad-contrib >= 0.9,
                      containers >= 0.3,

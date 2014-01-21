@@ -61,7 +61,8 @@ updateUI i3 date clockin =
      htmlElementSetInnerHTML date (formatTime defaultTimeLocale "%F %T %z (%Z)" now)
      config <- getClockinConfig
      entries <- readClockinEntries config
-     let desc = onelinerStatus now (clockinStatus config (zonedTimeToUTC now) entries)
+     now <- getCurrentTime
+     let desc = onelinerStatus now (clockinStatus config now entries)
      htmlElementSetInnerHTML clockin (T.unpack desc)
 
 -- | Get the output from i3status.

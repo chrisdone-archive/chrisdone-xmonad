@@ -25,7 +25,7 @@ page = do
 -- | CSS theme.
 theme :: Html
 theme = do
-  link ! href "http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+  link ! href "http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
        ! rel "stylesheet"
   style $ mconcat ["body {"
                   ,"font-size: 22px;"
@@ -67,6 +67,9 @@ theme = do
                   ,"}"
                   ,"#power-off:hover {"
                   ,"color: #fff;"
+                  ,"}"
+                  ,"#center #inbox {"
+                  ,"margin-left: 1em"
                   ,"}"]
 
 -- | Right-hand size.
@@ -76,6 +79,7 @@ rhs = do
     span !# "i3" $ return ()
   span !# "center" $ do
     span !# "clockin" $ return ()
+    span !# "inbox" $ return ()
   span !# "rhs" $ do
     span !. "indicator" !# "date" $ return ()
 

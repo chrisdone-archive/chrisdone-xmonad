@@ -45,7 +45,9 @@ suaveStart = do
                     (documentGetElementById document "date")
   Just clockin <- fmap (fmap castToHTMLElement)
                        (documentGetElementById document "clockin")
-  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date clockin)
+  Just inbox <- fmap (fmap castToHTMLElement)
+                     (documentGetElementById document "inbox")
+  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date clockin inbox)
                                  threadDelay (1000 * 1000)
                                  loop)))
   void (onDestroy window mainQuit)
@@ -53,8 +55,8 @@ suaveStart = do
   return (Suave window)
 
 -- | Update the contents of the panel.
-updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> IO ()
-updateUI i3 date clockin =
+updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> HTMLElement -> IO ()
+updateUI i3 date clockin inbox =
   do status <- i3status
      htmlElementSetInnerHTML i3 (unpack status)
      now <- getZonedTime
@@ -63,13 +65,28 @@ updateUI i3 date clockin =
      entries <- readClockinEntries config
      now <- fmap zonedTimeToLocalTime getZonedTime
      let desc = onelinerStatus now (clockinStatus config now entries)
-     htmlElementSetInnerHTML clockin (T.unpack desc)
+     htmlElementSetInnerHTML clockin ("<i class='fa fa-clock-o'></i> " ++ T.unpack desc)
+     inboxAll <- fmap readInt (readProcessLine "notmuch search tag:inbox | wc -l")
+     inboxUnread <- fmap readInt (readProcessLine "notmuch search tag:inbox and tag:unread | wc -l")
+     htmlElementSetInnerHTML
+       inbox
+       ("<i class='fa fa-inbox'></i> " ++ show inboxAll ++ " (" ++ show inboxUnread ++ ")")
+  where readInt :: Text -> Int
+        readInt = read . unpack
 
 -- | Get the output from i3status.
 i3status :: IO Text
 i3status =
   do fp <- getDataFileName "i3status.conf"
      (_in,out,_err,pid) <- runInteractiveCommand ("i3status -c " ++ show fp)
+     line <- T.hGetLine out
+     terminateProcess pid
+     return line
+
+-- | Read a process line.
+readProcessLine :: String -> IO Text
+readProcessLine cmd =
+  do (_in,out,_err,pid) <- runInteractiveCommand cmd
      line <- T.hGetLine out
      terminateProcess pid
      return line

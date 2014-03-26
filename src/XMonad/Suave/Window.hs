@@ -60,7 +60,7 @@ updateUI i3 date clockin inbox =
   do status <- i3status
      htmlElementSetInnerHTML i3 (unpack status)
      now <- getZonedTime
-     htmlElementSetInnerHTML date (formatTime defaultTimeLocale "%F %T %z (%Z)" now)
+     htmlElementSetInnerHTML date (formatTime defaultTimeLocale "%A %F %T %z (%Z)" now)
      config <- getClockinConfig
      entries <- readClockinEntries config
      now <- fmap zonedTimeToLocalTime getZonedTime

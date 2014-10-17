@@ -6,6 +6,7 @@ import           Paths_xmonad_chrisdone
 import           XMonad.Suave.Types
 import           XMonad.Suave.View
 
+import Control.Exception (try,SomeException)
 import           Clockin
 import           Control.Concurrent
 import           Control.Monad
@@ -47,7 +48,7 @@ suaveStart = do
                        (documentGetElementById document "clockin")
   Just inbox <- fmap (fmap castToHTMLElement)
                      (documentGetElementById document "inbox")
-  void (forkIO (fix (\loop -> do postGUISync (updateUI i3 date clockin inbox)
+  void (forkIO (fix (\loop -> do postGUISync (void (try (updateUI i3 date clockin inbox) :: IO (Either SomeException ())))
                                  threadDelay (1000 * 1000)
                                  loop)))
   void (onDestroy window mainQuit)

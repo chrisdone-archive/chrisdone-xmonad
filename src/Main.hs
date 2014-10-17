@@ -32,5 +32,6 @@ main = do
                      })
   where newKeys x = M.union (keys defaultConfig x) (M.fromList (myKeys x))
         myKeys (XConfig{modMask=modm}) =
-          [{-((modm,xK_d),withFocused demanage)-}
-          ((modm,xK_b),liftIO (void (spawnPipe "chromium-browser")))]
+          [((modm,xK_d),withFocused demanage)
+          ,((modm,xK_b),liftIO (void (spawnPipe "chromium-browser")))
+          ,((modm,xK_g),liftIO (void (spawnPipe "gimp")))]

@@ -88,10 +88,10 @@ dateDisplays now =
           ,"/"
           ,timeAtZone (zoneOf "EST") now
           ,"/"
-          ,bold (formatTime defaultTimeLocale "%a %d %b" now)
-          ,bold (timeAtZone this now)
+          ,timeAtZone (zoneOf "IST") now
           ,"/"
-          ,timeAtZone (zoneOf "IST") now]
+          ,bold (formatTime defaultTimeLocale "%a %d %b" now)
+          ,bold (timeAtZone this now)]
   where bold x = "<span class='bold'>" ++ x ++ "</span>"
         this = zonedTimeZone now
         timeAndZone =

@@ -2,27 +2,28 @@
 
 module XMonad.Suave.Window where
 
-import           Paths_xmonad_chrisdone
-import           XMonad.Suave.Types
-import           XMonad.Suave.View
-
-import Control.Exception (try,SomeException)
 import           Clockin
 import           Control.Concurrent
+import           Control.Exception (try,SomeException)
 import           Control.Monad
 import           Control.Monad.Fix
+import           Data.Maybe
 import qualified Data.Text as T
 import           Data.Text.Lazy (unpack,Text)
 import qualified Data.Text.Lazy.IO as T
 import           Data.Time
+import           Data.Time.Zone
 import           Graphics.UI.Gtk hiding (LayoutClass)
 import           Graphics.UI.Gtk.WebKit.DOM.Document
 import           Graphics.UI.Gtk.WebKit.DOM.HTMLElement
 import           Graphics.UI.Gtk.WebKit.Types hiding (Text)
 import           Graphics.UI.Gtk.WebKit.WebView
+import           Paths_xmonad_chrisdone
 import           System.Locale
 import           System.Process
 import           Text.Blaze.Html.Renderer.Text
+import           XMonad.Suave.Types
+import           XMonad.Suave.View
 
 -- | Start up a Suave panel.
 suaveStart :: IO (Suave)
@@ -66,7 +67,7 @@ updateUI i3 date clockin =
                              (unpack status)
      now <- getZonedTime
      htmlElementSetInnerHTML date
-                             (formatTime defaultTimeLocale "%A %F %T %z (%Z)" now)
+                             (dateDisplays now)
      config <- getClockinConfig
      entries <- readClockinEntries config
      now <-
@@ -78,6 +79,27 @@ updateUI i3 date clockin =
                              ("<i class='fa fa-clock-o'></i> " ++ T.unpack desc)
   where readInt :: Text -> Int
         readInt = read . unpack
+
+dateDisplays now =
+  unwords [timeAtZone (zoneOf "PST") now
+          ,"/"
+          ,timeAtZone (zoneOf "EST") now
+          ,"/"
+          ,bold (formatTime defaultTimeLocale "%a %d %b" now)
+          ,bold (timeAtZone this now)
+          ,"/"
+          ,timeAtZone (zoneOf "IST") now]
+  where bold x = "<span class='bold'>" ++ x ++ "</span>"
+        this = zonedTimeZone now
+        timeAndZone =
+          formatTime defaultTimeLocale "%H:%M %Z (UTC%z)"
+        timeAtZone zone t =
+          timeAndZone
+            (utcToZonedTime zone
+                            (zonedTimeToUTC t))
+        zoneOf name =
+          fromMaybe (error ("Unable to get zone for " ++ name))
+                    (getZone name)
 
 -- | Get the output from i3status.
 i3status :: IO Text

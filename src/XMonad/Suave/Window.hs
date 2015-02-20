@@ -46,9 +46,7 @@ suaveStart = do
                     (documentGetElementById document "date")
   Just clockin <- fmap (fmap castToHTMLElement)
                        (documentGetElementById document "clockin")
-  Just inbox <- fmap (fmap castToHTMLElement)
-                     (documentGetElementById document "inbox")
-  void (forkIO (fix (\loop -> do postGUISync (void (try (updateUI i3 date clockin inbox) :: IO (Either SomeException ())))
+  void (forkIO (fix (\loop -> do postGUISync (void (try (updateUI i3 date clockin) :: IO (Either SomeException ())))
                                  threadDelay (1000 * 1000)
                                  loop)))
   void (onDestroy window mainQuit)
@@ -56,8 +54,8 @@ suaveStart = do
   return (Suave window)
 
 -- | Update the contents of the panel.
-updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> HTMLElement -> IO ()
-updateUI i3 date clockin inbox =
+updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> IO ()
+updateUI i3 date clockin =
   do status <- i3status
      htmlElementSetInnerHTML i3 (unpack status)
      now <- getZonedTime
@@ -67,11 +65,6 @@ updateUI i3 date clockin inbox =
      now <- fmap zonedTimeToLocalTime getZonedTime
      let desc = onelinerStatus now (clockinStatus config now entries)
      htmlElementSetInnerHTML clockin ("<i class='fa fa-clock-o'></i> " ++ T.unpack desc)
-     inboxAll <- fmap readInt (readProcessLine "notmuch search tag:inbox | wc -l")
-     inboxUnread <- fmap readInt (readProcessLine "notmuch search tag:inbox and tag:unread | wc -l")
-     htmlElementSetInnerHTML
-       inbox
-       ("<i class='fa fa-inbox'></i> " ++ show inboxAll ++ " (" ++ show inboxUnread ++ ")")
   where readInt :: Text -> Int
         readInt = read . unpack
 

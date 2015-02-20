@@ -67,9 +67,6 @@ theme = do
                   ,"}"
                   ,"#power-off:hover {"
                   ,"color: #fff;"
-                  ,"}"
-                  ,"#center #inbox {"
-                  ,"margin-left: 1em"
                   ,"}"]
 
 -- | Right-hand size.
@@ -79,7 +76,6 @@ rhs = do
     span !# "i3" $ return ()
   span !# "center" $ do
     span !# "clockin" $ return ()
-    span !# "inbox" $ return ()
   span !# "rhs" $ do
     span !. "indicator" !# "date" $ return ()
 

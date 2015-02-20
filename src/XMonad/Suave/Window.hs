@@ -9,6 +9,7 @@ import           Control.Monad
 import           Control.Monad.Fix
 import           Data.Maybe
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as LT
 import           Data.Text.Lazy (unpack,Text)
 import qualified Data.Text.Lazy.IO as T
 import           Data.Time
@@ -19,6 +20,7 @@ import           Graphics.UI.Gtk.WebKit.DOM.HTMLElement
 import           Graphics.UI.Gtk.WebKit.Types hiding (Text)
 import           Graphics.UI.Gtk.WebKit.WebView
 import           Paths_xmonad_chrisdone
+import           System.IO
 import           System.Locale
 import           System.Process
 import           Text.Blaze.Html.Renderer.Text
@@ -63,8 +65,9 @@ suaveStart =
 updateUI :: HTMLElement -> HTMLElement -> HTMLElement -> IO ()
 updateUI i3 date clockin =
   do status <- i3status
+     mem <- readProcessLine "mem-use.sh"
      htmlElementSetInnerHTML i3
-                             (unpack status)
+                             (unpack status ++ " <span class='indicator'><i class='fa fa-adjust'></i> xs" ++ mem ++ "</span>")
      now <- getZonedTime
      htmlElementSetInnerHTML date
                              (dateDisplays now)
@@ -105,19 +108,26 @@ dateDisplays now =
 i3status :: IO Text
 i3status =
   do fp <- getDataFileName "i3status.conf"
-     (_in,out,_err,pid) <-
+     (inp,out,err,pid) <-
        runInteractiveCommand ("i3status -c " ++ show fp)
      line <- T.hGetLine out
+     hClose out
+     hClose inp
+     hClose err
      terminateProcess pid
      return line
 
 -- | Read a process line.
-readProcessLine :: String -> IO Text
+readProcessLine :: String -> IO String
 readProcessLine cmd =
-  do (_in,out,_err,pid) <- runInteractiveCommand cmd
+  do (inp,out,err,pid) <-
+       runInteractiveCommand cmd
      line <- T.hGetLine out
+     hClose out
+     hClose inp
+     hClose err
      terminateProcess pid
-     return line
+     return (LT.unpack line)
 
 -- | Window title of the Suave panel.
 suaveWindowTitle :: String

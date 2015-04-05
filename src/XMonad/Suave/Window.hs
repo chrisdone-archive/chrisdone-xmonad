@@ -67,7 +67,7 @@ updateUI i3 date clockin =
   do status <- i3status
      mem <- readProcessLine "mem-use.sh"
      htmlElementSetInnerHTML i3
-                             (unpack status ++ " <span class='indicator'><i class='fa fa-adjust'></i> xs" ++ mem ++ "</span>")
+                             (unpack status ++ " <span class='indicator'><i class='fa fa-adjust'></i> " ++ mem ++ "</span>")
      now <- getZonedTime
      htmlElementSetInnerHTML date
                              (dateDisplays now)
@@ -88,8 +88,8 @@ dateDisplays now =
           ,"/"
           ,timeAtZone (zoneOf "EST") now
           ,"/"
-          ,timeAtZone (zoneOf "IST") now
-          ,"/"
+          -- ,timeAtZone (zoneOf "IST") now -- not needed presently, IST=CEST
+          -- ,"/"
           ,bold (formatTime defaultTimeLocale "%a %d %b" now)
           ,bold (timeAtZone this now)]
   where bold x = "<span class='bold'>" ++ x ++ "</span>"

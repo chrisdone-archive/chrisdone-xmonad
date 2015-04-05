@@ -28,4 +28,5 @@ Executable xmonad
                      xmonad >= 0.9,
                      xmonad-contrib >= 0.9,
                      containers >= 0.3,
-                     webkit >= 0.12.5.1
+                     webkit >= 0.12.5.1,
+                     formatting

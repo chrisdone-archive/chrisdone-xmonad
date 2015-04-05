@@ -1,3 +1,6 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ExtendedDefaultRules #-}
+
 -- | The client window (webkit).
 
 module XMonad.Suave.Window where
@@ -9,11 +12,14 @@ import           Control.Monad
 import           Control.Monad.Fix
 import           Data.Maybe
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LT
 import           Data.Text.Lazy (unpack,Text)
+import qualified Data.Text.Lazy as LT
 import qualified Data.Text.Lazy.IO as T
 import           Data.Time
+import           Data.Monoid
 import           Data.Time.Zone
+import           Formatting
+import           Formatting.Time
 import           Graphics.UI.Gtk hiding (LayoutClass)
 import           Graphics.UI.Gtk.WebKit.DOM.Document
 import           Graphics.UI.Gtk.WebKit.DOM.HTMLElement
@@ -78,10 +84,25 @@ updateUI i3 date clockin =
      let desc =
            onelinerStatus now
                           (clockinStatus config now entries)
+     keys <- keyboardStats
      htmlElementSetInnerHTML clockin
-                             ("<i class='fa fa-clock-o'></i> " ++ T.unpack desc)
-  where readInt :: Text -> Int
-        readInt = read . unpack
+                             ("<i class='fa fa-clock-o'></i> " ++ T.unpack desc ++
+                              " <i class='fa fa-keyboard-o' id='kbd'></i> " ++
+                              keys)
+
+-- | Get key press count.
+keyboardStats :: IO String
+keyboardStats =
+  do d <- getCurrentTime
+     keys <- fmap read (readProcessLine (cmd d))
+     return (formatToString (commas)
+                            (keys :: Int))
+  where cmd d =
+          formatToString
+            ("grep '^" %
+             (year <> month <> dayOfMonth) %
+             "' ~/Logs/dita.log  | wc -l")
+            d
 
 dateDisplays now =
   unwords [timeAtZone (zoneOf "PST") now

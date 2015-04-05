@@ -76,7 +76,8 @@ theme =
                ,"}"
                ,"#power-off:hover {"
                ,"color: #fff;"
-               ,"}"]
+               ,"}"
+               ,"#kbd { margin-left: 1em}"]
 
 -- | Right-hand size.
 rhs :: Html

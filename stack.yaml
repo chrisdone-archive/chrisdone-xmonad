@@ -1,0 +1,9 @@
+flags: {}
+packages:
+- '.'
+extra-deps:
+- xmonad-0.11.1
+- xmonad-contrib-0.11.4
+- X11-xft-0.3.1
+- utf8-string-0.3.8
+resolver: lts-3.0
